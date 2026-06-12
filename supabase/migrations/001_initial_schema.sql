@@ -45,6 +45,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_stones_updated_at ON stones;
 CREATE TRIGGER trg_stones_updated_at
   BEFORE UPDATE ON stones
   FOR EACH ROW
@@ -53,15 +54,19 @@ CREATE TRIGGER trg_stones_updated_at
 -- RLS: 用户只能访问自己的石头
 ALTER TABLE stones ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS stones_select_policy ON stones;
 CREATE POLICY stones_select_policy ON stones
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS stones_insert_policy ON stones;
 CREATE POLICY stones_insert_policy ON stones
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS stones_update_policy ON stones;
 CREATE POLICY stones_update_policy ON stones
   FOR UPDATE USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS stones_delete_policy ON stones;
 CREATE POLICY stones_delete_policy ON stones
   FOR DELETE USING (auth.uid() = user_id);
 
@@ -81,15 +86,19 @@ CREATE INDEX IF NOT EXISTS idx_quick_notes_user_id ON quick_notes(user_id, creat
 
 ALTER TABLE quick_notes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS quick_notes_select_policy ON quick_notes;
 CREATE POLICY quick_notes_select_policy ON quick_notes
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS quick_notes_insert_policy ON quick_notes;
 CREATE POLICY quick_notes_insert_policy ON quick_notes
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS quick_notes_update_policy ON quick_notes;
 CREATE POLICY quick_notes_update_policy ON quick_notes
   FOR UPDATE USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS quick_notes_delete_policy ON quick_notes;
 CREATE POLICY quick_notes_delete_policy ON quick_notes
   FOR DELETE USING (auth.uid() = user_id);
 
@@ -116,6 +125,7 @@ CREATE TABLE IF NOT EXISTS collections (
 CREATE INDEX IF NOT EXISTS idx_collections_user_id ON collections(user_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_collections_type     ON collections(user_id, type);
 
+DROP TRIGGER IF EXISTS trg_collections_updated_at ON collections;
 CREATE TRIGGER trg_collections_updated_at
   BEFORE UPDATE ON collections
   FOR EACH ROW
@@ -123,15 +133,19 @@ CREATE TRIGGER trg_collections_updated_at
 
 ALTER TABLE collections ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS collections_select_policy ON collections;
 CREATE POLICY collections_select_policy ON collections
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS collections_insert_policy ON collections;
 CREATE POLICY collections_insert_policy ON collections
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS collections_update_policy ON collections;
 CREATE POLICY collections_update_policy ON collections
   FOR UPDATE USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS collections_delete_policy ON collections;
 CREATE POLICY collections_delete_policy ON collections
   FOR DELETE USING (auth.uid() = user_id);
 
@@ -148,8 +162,10 @@ CREATE TABLE IF NOT EXISTS export_logs (
 
 ALTER TABLE export_logs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS export_logs_select_policy ON export_logs;
 CREATE POLICY export_logs_select_policy ON export_logs
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS export_logs_insert_policy ON export_logs;
 CREATE POLICY export_logs_insert_policy ON export_logs
   FOR INSERT WITH CHECK (auth.uid() = user_id);
